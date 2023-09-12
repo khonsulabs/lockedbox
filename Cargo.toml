@@ -1,12 +1,13 @@
 [package]
 name = "lockedbox"
 version = "0.1.0"
+description = "A Box-like type that prevents paging its contents to disk."
 edition = "2021"
 license = "MIT OR Apache-2.0"
 readme = "../README.md"
 repository = "https://github.com/khonsulabs/lockedbox"
-keywords = ["memory", "mlock", "no-std"]
-categories = ["encodingmemory-management"]
+keywords = ["memory", "mlock"]
+categories = ["memory-management", "no-std"]
 rust-version = "1.56.1"
 
 [dependencies]

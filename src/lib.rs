@@ -1,5 +1,5 @@
 #![doc = include_str!("../README.md")]
-#![warn(clippy::pedantic)]
+#![warn(clippy::pedantic, clippy::cargo)]
 #![no_std]
 
 #[cfg(test)]

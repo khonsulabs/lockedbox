@@ -125,8 +125,14 @@
 <a href="#125" id="125">125</a>
 <a href="#126" id="126">126</a>
 <a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
 </pre></div><pre class="rust"><code><span class="attr">#![doc = <span class="macro">include_str!</span>(<span class="string">&quot;../README.md&quot;</span>)]
-#![warn(clippy::pedantic)]
+#![warn(clippy::pedantic, clippy::cargo)]
 #![no_std]
 
 #[cfg(test)]
@@ -157,7 +163,13 @@
         // allocation is checked by `memsec`.
         </span><span class="kw">let </span>memory = <span class="kw">unsafe </span>{
             <span class="kw">let </span>memory = memsec::malloc::&lt;T&gt;().expect(<span class="string">&quot;allocation too large&quot;</span>);
-            memsec::mlock(memory.as_ptr().cast(), size_of::&lt;T&gt;());
+            <span class="comment">// It is important to lock the memory before storing the value,
+            // otherwise the process could be preempted between the write and
+            // the mlock calls, and the memory theoretically could be paged to
+            // disk during this preemption. By locking before writing, we ensure
+            // `contained` is not paged to disk. The stack, however, could still
+            // be paged, but that is a problem for another crate to solve.
+            </span>memsec::mlock(memory.as_ptr().cast(), size_of::&lt;T&gt;());
             ptr::write(memory.as_ptr(), contained);
             memory
         };

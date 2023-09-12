@@ -41,4 +41,5 @@ jobs:
         with:
           toolchain: stable
           targets: riscv32imc-esp-espidf
+          components: rustc, cargo
       - run: cargo build --target riscv32imc-esp-espidf --lib --release --no-default-features

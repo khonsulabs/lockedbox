@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"lockedbox":[["impl&lt;T&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/ops/deref/trait.Deref.html\" title=\"trait core::ops::deref::Deref\">Deref</a> for <a class=\"struct\" href=\"lockedbox/struct.LockedBox.html\" title=\"struct lockedbox::LockedBox\">LockedBox</a>&lt;T&gt;"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

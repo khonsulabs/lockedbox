@@ -33,13 +33,13 @@ jobs:
         run: cargo test --all-targets
 
   build-nostd:
-    name: Build on no_std target (riscv32imc-esp-espidf)
+    # wasm32-unknown-emscripten is no_std, and it is supported by getrandom
+    name: Build on no_std target (wasm32-unknown-emscripten)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-          targets: riscv32imc-esp-espidf
-          components: rustc, cargo
-      - run: cargo build --target riscv32imc-esp-espidf --lib --release --no-default-features
+          targets: wasm32-unknown-emscripten
+      - run: cargo build --target wasm32-unknown-emscripten --lib --release

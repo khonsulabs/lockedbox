@@ -7,6 +7,7 @@ extern crate std;
 
 use core::mem::{size_of, ManuallyDrop};
 use core::ops::{Deref, DerefMut};
+use core::panic::UnwindSafe;
 use core::ptr::{self, NonNull};
 
 /// A [`Box`]-like type that uses `mlock` to prevent paging the allocated memory
@@ -61,6 +62,14 @@ impl<T> LockedBox<T> {
         }
     }
 }
+
+// SAFETY: This type adds no restrictions over whether it is Sync other than
+// whether T is Sync.
+unsafe impl<T> Sync for LockedBox<T> where T: Sync {}
+// SAFETY: This type adds no restrictions over whether it is Send other than
+// whether T is Send.
+unsafe impl<T> Send for LockedBox<T> where T: Send {}
+impl<T> UnwindSafe for LockedBox<T> where T: UnwindSafe {}
 
 impl<T> Deref for LockedBox<T> {
     type Target = T;

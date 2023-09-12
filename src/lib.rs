@@ -30,6 +30,12 @@ impl<T> LockedBox<T> {
         // allocation is checked by `memsec`.
         let memory = unsafe {
             let memory = memsec::malloc::<T>().expect("allocation too large");
+            // It is important to lock the memory before storing the value,
+            // otherwise the process could be preempted between the write and
+            // the mlock calls, and the memory theoretically could be paged to
+            // disk during this preemption. By locking before writing, we ensure
+            // `contained` is not paged to disk. The stack, however, could still
+            // be paged, but that is a problem for another crate to solve.
             memsec::mlock(memory.as_ptr().cast(), size_of::<T>());
             ptr::write(memory.as_ptr(), contained);
             memory

@@ -24,13 +24,23 @@ impl<T> LockedBox<T> {
     ///
     /// # Panics
     ///
-    /// This function panics If `size_of::<T>() >= usize::MAX - 4 * PAGE_SIZE`.
+    /// This function panics if `size_of::<T>() >= usize::MAX - 4 * PAGE_SIZE`
+    /// or the underlying allocation fails.
     pub fn new(contained: T) -> Self {
+        Self::try_new(contained).expect("allocation too large")
+    }
+
+    /// Creates a new locked box with `contained` in a newly allocated,
+    /// `mlock`-protected region of memory.
+    ///
+    /// Returns `None` if `size_of::<T>() >= usize::MAX - 4 * PAGE_SIZE` or the
+    /// underlying allocation fails.
+    pub fn try_new(contained: T) -> Option<Self> {
         // SAFETY: no references are made to the data contained by the allocated
         // memory until after `contained` as been written. The size of the
         // allocation is checked by `memsec`.
         let memory = unsafe {
-            let memory = memsec::malloc::<T>().expect("allocation too large");
+            let memory = memsec::malloc::<T>()?;
             // It is important to lock the memory before storing the value,
             // otherwise the process could be preempted between the write and
             // the mlock calls, and the memory theoretically could be paged to
@@ -41,7 +51,7 @@ impl<T> LockedBox<T> {
             ptr::write(memory.as_ptr(), contained);
             memory
         };
-        Self(memory)
+        Some(Self(memory))
     }
 
     /// Returns the pointer to the underlying data.
